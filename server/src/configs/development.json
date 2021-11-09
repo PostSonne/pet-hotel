@@ -1,0 +1,16 @@
+{
+    "env": "development",
+    "dbConfig": {
+        "url": "mongodb+srv://ananichevl:q1w2e3r4@cluster0.mbtwz.mongodb.net",
+        "database": "pet_hotel"
+    },
+    "secretKey": "secretKey",
+    "log": {
+        "format": "dev",
+        "dir": "../logs"
+    },
+    "cors": {
+        "origin": true,
+        "credentials": true
+    }
+}
