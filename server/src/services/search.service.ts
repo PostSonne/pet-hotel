@@ -1,5 +1,6 @@
 import axios, {AxiosRequestHeaders, Method} from "axios";
 import {SitterSourceType} from "@/enums/sitter.source.type";
+
 const objectMapper = require('object-mapper');
 
 type RequestOptions = {
@@ -83,7 +84,10 @@ class SearchService {
       url: 'https://dogsy.ru/search?bounds=((59.398630000000004,%2029.77413),%20(60.47863,%2030.854129999999998))&placeName=%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D1%8F,%20%D0%A1%D0%B0%D0%BD%D0%BA%D1%82-%D0%9F%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3',
       method: 'get',
       headers: {'x-requested-with': 'XMLHttpRequest'},
-      convert: (data) => data.resultsList.map(sitter => objectMapper({...sitter, fullName: `${sitter.lastName} ${sitter.firstName}`}, map2)).map(sitter => ({
+      convert: (data) => data.resultsList.map(sitter => objectMapper({
+        ...sitter,
+        fullName: `${sitter.lastName} ${sitter.firstName}`
+      }, map2)).map(sitter => ({
         source: SitterSourceType.DOGSY,
         ...sitter
       }))
