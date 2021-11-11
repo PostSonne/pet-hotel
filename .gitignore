@@ -122,3 +122,6 @@ dist
 .vscode
 
 client/node_modules/
+/.idea/
+/.vscode/
+/pet-hotel.iml
