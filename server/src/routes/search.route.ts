@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Routes } from 'interfaces/routes.interface';
-import SearchController from "controllers/search.controller";
+import SearchController from 'controllers/search.controller';
 
 class SearchRoute implements Routes {
   public path = '/search';
