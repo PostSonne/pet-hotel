@@ -1,25 +1,15 @@
-import {Autocomplete, Box, Button, Grid, Paper, Stack, Tab, Tabs, TextField, styled as s, Typography} from "@mui/material";
-import PhoneIcon from '@mui/icons-material/Phone';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import PersonPinIcon from '@mui/icons-material/PersonPin';
+import {Autocomplete, Box, Button, Grid, Tab, Tabs, TextField, Typography} from "@mui/material";
 import React from "react";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import styled from "styled-components";
+import PhoneIcon from "@mui/icons-material/Phone";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PersonPinIcon from "@mui/icons-material/PersonPin";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import DatePicker from "@mui/lab/DatePicker";
+import {Item} from "../Item";
+import { StyledStack } from "../StyledComponents/StyledStack";
 
-export const MainPage = () => {
-  const Item = s(Paper)(({theme}) => ({
-    ...theme.typography.body2,
-    margin: theme.spacing(10, 0, 0, 0),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
-
-  const StyledStack = styled(Stack)`
-    align-items: baseline
-  `;
-
+export const CategoryTabs = () => {
   const [value, setValue] = React.useState(0);
   const [dateValue, setDateValue] = React.useState<Date | null>(null);
 
@@ -60,6 +50,7 @@ export const MainPage = () => {
   }
   const data: readonly any[] = [];
   const style = {"margin": "87px 0 0 0"};
+  const styleTwo = {"margin": "40px 0 0 0"};
   return (
     <Grid
       container
@@ -91,16 +82,16 @@ export const MainPage = () => {
               </Grid>
               <Grid item xs={2} flexDirection={"row"}>
                 <Item>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DatePicker
-                        label="Basic example"
-                        value={dateValue}
-                        onChange={(newValue) => {
-                          setDateValue(newValue);
-                        }}
-                        renderInput={(params) => <TextField {...params} label={"С..."} />}
-                      />
-                    </LocalizationProvider>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Basic example"
+                      value={dateValue}
+                      onChange={(newValue) => {
+                        setDateValue(newValue);
+                      }}
+                      renderInput={(params) => <TextField {...params} label={"С..."} />}
+                    />
+                  </LocalizationProvider>
                 </Item>
               </Grid>
               <Grid item xs={2} flexDirection={"row"}>
@@ -133,14 +124,19 @@ export const MainPage = () => {
                   </StyledStack>
                 </div>
               </Grid>
-              <Grid item xs={2} >
-                <div style={style}>
-                  <StyledStack direction="row" spacing={2}>
-                    <Button size="large" variant="outlined">
+              <Grid
+                container
+                direction="row-reverse"
+                justifyContent="flex-start"
+                alignItems="center"
+              >
+                <Grid item xs={2}>
+                  <div style={styleTwo}>
+                    <Button color="secondary" size="large" variant="contained">
                       Найти
                     </Button>
-                  </StyledStack>
-                </div>
+                  </div>
+                </Grid>
               </Grid>
             </Grid>
           </TabPanel>
