@@ -122,6 +122,8 @@ dist
 .vscode
 
 client/node_modules/
+/client/src/react-app-env.d.ts
+
 /.idea/
 /.vscode/
 /pet-hotel.iml
