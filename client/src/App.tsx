@@ -5,7 +5,7 @@ import {MainPage} from "./containers/MainPage";
 
 function App() {
   return (
-    <Container maxWidth={"xl"} fixed={true}>
+    <Container maxWidth="xl" fixed={true}>
         <MainPage/>
     </Container>
   );
