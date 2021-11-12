@@ -1,0 +1,5 @@
+export enum SearchCategoryType {
+  HOTEL = 'HOTEL',
+  DOGSITTING = 'DOGSITTING',
+  DOGSITTING_REMOTE = 'DOGSITTING_REMOTE',
+}

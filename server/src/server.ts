@@ -1,4 +1,4 @@
-import SearchRoute from "routes/search.route";
+import SearchRoute from 'routes/search.route';
 
 process.env['NODE_CONFIG_DIR'] = __dirname + '/configs';
 

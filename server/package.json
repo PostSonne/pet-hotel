@@ -5,16 +5,17 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "start": "npm run build && ../node_modules/.bin/cross-env NODE_ENV=production node dist/server.js",
-    "dev": "../node_modules/.bin/cross-env NODE_ENV=development nodemon",
-    "build": "../node_modules/.bin/tsc && npx tsc-alias",
-    "test": "../node_modules/.bin/jest --forceExit --detectOpenHandles",
-    "lint": "../node_modules/.bin/eslint --ignore-path .gitignore --ext .ts server/src/",
-    "lint:fix": "npm run lint -- --fix",
-    "deploy:prod": "npm run build && ../node_modules/.bin/pm2 start ecosystem.config.js --only prod",
-    "deploy:dev": "../node_modules/.bin/pm2 start ecosystem.config.js --only dev"
+    "start": "npm run build && cross-env NODE_ENV=production node dist/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "build": "tsc && npx tsc-alias",
+    "test": "jest --forceExit --detectOpenHandles",
+    "lint": "eslint --ext .ts src/",
+    "lint:fix": "eslint --ext .ts src/ --fix",
+    "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
+    "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
   "dependencies": {
+    "async": "^3.2.2",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
@@ -32,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.1",
     "morgan": "^1.10.0",
+    "node-cache": "^5.1.2",
     "object-mapper": "^6.2.0",
     "pm2": "^5.1.0",
     "swagger-jsdoc": "^6.0.0",

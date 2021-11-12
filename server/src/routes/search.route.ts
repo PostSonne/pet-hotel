@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Routes } from 'interfaces/routes.interface';
-import SearchController from "controllers/search.controller";
+import SearchController from 'controllers/search.controller';
 
 class SearchRoute implements Routes {
   public path = '/search';
@@ -12,7 +12,7 @@ class SearchRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, this.searchController.search);
+    this.router.post(`${this.path}`, this.searchController.search);
   }
 }
 

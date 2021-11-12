@@ -1,4 +1,4 @@
 export interface dbConfig {
-  url: string,
-  database: string
+  url: string;
+  database: string;
 }
