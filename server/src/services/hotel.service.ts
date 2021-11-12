@@ -1,5 +1,7 @@
 import NodeCache from 'node-cache';
 import axios, { AxiosRequestHeaders, Method } from 'axios';
+import hotelModel from '../models/hotels.model';
+import { SearchCategoryType } from '../enums/search.category.type';
 
 type RequestOptions = {
   url: string;
@@ -20,7 +22,7 @@ const hotelServices: RequestOptions[] = [
         location: value.formatted_address,
         externalId: value.place_id,
         rating: value.rating,
-        reviewsCount: value.user_ratings_total
+        reviewsCount: value.user_ratings_total,
       })),
   },
 ];
@@ -55,14 +57,23 @@ function fetchData(requestOptions: RequestOptions, data: []) {
 }
 
 class HotelService {
+  public hotelModel = hotelModel;
+
   public async getHotels(cache: NodeCache) {
     const result = await fetchData(hotelServices[0], []);
-    return [result]
+    const hotels = await hotelModel.find();
+
+    const formattedResult = [result]
       .filter(value => value.success)
       .map(value => value.data)
+      .concat(hotels)
       .reduce((previousValue, currentValue) => {
         return previousValue.concat(currentValue);
-      });
+      })
+      .sort((value1, value2) => value1.name.localeCompare(value2.name));
+
+    cache.set(SearchCategoryType.HOTEL, formattedResult);
+    return formattedResult;
   }
 }
 
