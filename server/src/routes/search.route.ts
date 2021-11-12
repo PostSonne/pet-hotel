@@ -12,7 +12,7 @@ class SearchRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, this.searchController.search);
+    this.router.post(`${this.path}`, this.searchController.search);
   }
 }
 
