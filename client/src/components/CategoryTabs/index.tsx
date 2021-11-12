@@ -9,9 +9,16 @@ import {DogsittersTab} from "../DogsittersTab";
 import {ZooHotelTab} from "../ZooHotelTab";
 import {DaySittersTab} from "../DaySIttersTab";
 
+export enum SearchCategoryType {
+  HOTEL = 'HOTEL',
+  DOGSITTING = 'DOGSITTING',
+  DOGSITTING_REMOTE = 'DOGSITTING_REMOTE',
+}
+
 export type CategoryTabType = {
   value: number;
-  index: number
+  index: number;
+  category: SearchCategoryType
 }
 
 export const CategoryTabs = () => {
@@ -38,9 +45,9 @@ export const CategoryTabs = () => {
             <Tab icon={<EmojiPeopleOutlinedIcon/>} label="СИТТЕР У ВАС ДОМА" {...a11yProps(1)}/>
             <Tab icon={<HomeRoundedIcon/>} label="ЗООГОСТИНИЦЫ" {...a11yProps(2)}/>
           </Tabs>
-          <DogsittersTab value={value} index={0}/>
-          <DaySittersTab value={value} index={1}/>
-          <ZooHotelTab value={value} index={2}/>
+          <DogsittersTab value={value} index={0} category={SearchCategoryType.DOGSITTING}/>
+          <DaySittersTab value={value} index={1} category={SearchCategoryType.DOGSITTING_REMOTE}/>
+          <ZooHotelTab value={value} index={2} category={SearchCategoryType.HOTEL}/>
         </Item>
       </Grid>
     </Grid>

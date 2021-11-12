@@ -16,23 +16,22 @@ import {CategoryTabType} from "../CategoryTabs";
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import {AppState} from "../../redux/reducers/rootReducer";
 import { useSelector, useDispatch } from 'react-redux';
-import {search} from "../../redux/actions/searchActions";
+import {searchPetSitters} from "../../redux/actions/searchActions";
 import {CustomDatePicker} from "../DatePicker";
-import {Item} from "../Item";
 
-export const DogsittersTab: React.FC<CategoryTabType> = ({value, index}) => {
+export const style = {"margin": "60px 0 0 0"};
+export const styleTwo = {"margin": "67px 0 0 0", "text-align": "end"};
+export const styleThree = {"margin": "25px 0 0 0"};
+export const styleText = {"margin": "0 0 10px 0", "color": "#9c27b0"};
+export const styleText2 = {"margin": "0 0 10px 0",};
+
+export const DogsittersTab: React.FC<CategoryTabType> = ({value, index, category}) => {
   const searchResult = useSelector((state: AppState) => state.searchResult);
-  const testData = searchResult?.data.splice(1165);
+  const testData = searchResult?.data.slice(0, 10);
   const dispatch = useDispatch();
 
-  const style = {"margin": "60px 0 0 0"};
-  const styleTwo = {"margin": "67px 0 0 0", "text-align": "end"};
-  const styleThree = {"margin": "25px 0 0 0"};
-  const styleText = {"margin": "0 0 10px 0", "color": "#9c27b0"};
-  const styleText2 = {"margin": "0 0 10px 0",};
-
   function handleSearchData() {
-    dispatch(search());
+    dispatch(searchPetSitters(category));
   }
 
   return (
@@ -93,7 +92,7 @@ export const DogsittersTab: React.FC<CategoryTabType> = ({value, index}) => {
             {testData.map((item) => (
               <Grid item xs={3}>
                 <Paper elevation={5}>
-                  <Card elevation={5} sx={{ maxWidth: 300, height: 400 }}>
+                  <Card elevation={5} sx={{ height: 400 }}>
                     <CardActionArea>
                       <CardMedia
                         component="img"
@@ -106,9 +105,6 @@ export const DogsittersTab: React.FC<CategoryTabType> = ({value, index}) => {
                         </Typography>
                         <Typography variant="subtitle2" textAlign={"left"} style={styleText2}>
                           {item.location}
-                        </Typography>
-                        <Typography variant="overline" textAlign={"left"}>
-                          {item.price} руб/сутки
                         </Typography>
                       </CardContent>
                     </CardActionArea>
