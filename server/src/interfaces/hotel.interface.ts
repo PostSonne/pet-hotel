@@ -5,8 +5,8 @@ export interface Hotel {
   name: string;
   fullAddress: string;
   geo: Geo;
-  link: string;
   icon: string;
+  link?: string;
   description?: string;
   phone?: string;
   email?: string;

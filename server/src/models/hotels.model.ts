@@ -15,13 +15,12 @@ const hotelSchema: Schema = new Schema({
     type: Object,
     required: true,
   },
-  link: {
-    type: String,
-    required: true,
-  },
   icon: {
     type: String,
     required: true,
+  },
+  link: {
+    type: String,
   },
   description: {
     type: String,
