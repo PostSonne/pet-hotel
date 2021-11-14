@@ -1,5 +1,5 @@
 import React from "react";
-import {Box} from "@mui/material";
+import {Box, Container} from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -11,7 +11,7 @@ export function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
+    <Container component="section" maxWidth="lg"
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
@@ -23,6 +23,6 @@ export function TabPanel(props: TabPanelProps) {
           <div>{children}</div>
         </Box>
       )}
-    </div>
+    </Container>
   );
 }

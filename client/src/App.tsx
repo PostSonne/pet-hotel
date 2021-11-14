@@ -2,12 +2,13 @@ import React from 'react';
 import './App.css';
 import {Container} from "@mui/material";
 import {MainPage} from "./containers/MainPage";
+import Box from "@mui/material/Box";
 
 function App() {
   return (
-    <Container maxWidth="xl" fixed={true}>
+    <Box>
         <MainPage/>
-    </Container>
+    </Box>
   );
 }
 
