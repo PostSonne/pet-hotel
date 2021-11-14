@@ -1,4 +1,4 @@
-import {Grid, Tab, Tabs} from "@mui/material";
+import {Container, Grid, Tab, Tabs} from "@mui/material";
 import React from "react";
 import PersonIcon from '@mui/icons-material/Person';
 import EmojiPeopleOutlinedIcon from '@mui/icons-material/EmojiPeopleOutlined';
@@ -29,14 +29,15 @@ export const CategoryTabs = () => {
   };
 
   return (
-    <Grid
-      container
-      justifyContent={"center"}
+    <Container
+      maxWidth={"lg"}
     >
+      <Grid container
+            justifyContent={"center"}>
       <Grid item xs={12}>
         <Item>
           <Tabs
-            centered
+            centeredл
             variant="fullWidth"
             value={value}
             onChange={handleChange}
@@ -50,6 +51,7 @@ export const CategoryTabs = () => {
           <ZooHotelTab value={value} index={2} category={SearchCategoryType.HOTEL}/>
         </Item>
       </Grid>
-    </Grid>
+      </Grid>
+    </Container>
   )
 }
