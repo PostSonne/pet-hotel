@@ -2,8 +2,21 @@ import axios, { AxiosRequestHeaders, Method } from 'axios';
 import { SearchCategoryType } from '../enums/search.category.type';
 import { SitterSourceType } from '../enums/sitter.source.type';
 import NodeCache from 'node-cache';
+import NodeGeocoder from 'node-geocoder';
+import { SearchResponse } from '../interfaces/search.response.interface';
+import { PetType } from '../enums/pet.type';
+import {Sitter} from "../interfaces/sitter.interface";
 
 const objectMapper = require('object-mapper');
+
+const options = {
+  provider: 'google',
+  apiKey: 'AIzaSyB9BfnD76TfXlYQ-u_oZCjwC5f82ZgEhVI',
+};
+
+const geocoder = NodeGeocoder(options);
+
+type SitterResponseFromService = Omit<SearchResponse, 'paging'>;
 
 type RequestOptions = {
   url?: string;
@@ -13,7 +26,28 @@ type RequestOptions = {
   method: Method;
   data?: Object;
   headers?: AxiosRequestHeaders;
-  convert: Function;
+  convert: (data: any) => SitterResponseFromService;
+};
+
+const serviceType = {
+  2036230: 'зооняни',
+  2000774: 'передержка животных',
+  2002774: 'передержка кошек',
+  2002775: 'передержка собак',
+};
+
+const petType = {
+  2000774: [PetType.CAT, PetType.DOG, PetType.OTHER],
+  2002774: [PetType.CAT],
+  2002775: [PetType.DOG],
+  2036230: [PetType.CAT, PetType.CAT, PetType.CAT],
+};
+
+const categoryType = {
+  2000774: SearchCategoryType.DOGSITTING_REMOTE,
+  2002774: SearchCategoryType.DOGSITTING,
+  2002775: SearchCategoryType.DOGSITTING,
+  2036230: SearchCategoryType.DOGSITTING,
 };
 
 const geoMap = {
@@ -51,20 +85,43 @@ const sitterServices: RequestOptions[] = [
     },
     convert: data => ({
       data: data.data.pxf.profiles.edges
-        .map(edge => ({
-          ...objectMapper(edge.node, {
-            id: 'externalId',
-            fullName: 'fullName',
-            'geo[0].values[0].values[0].text': 'location',
-            'priceListPreview.prices[0]': 'price',
-          }),
-          categories: edge.node.geo?.map(geo => geoMap[geo.title]),
-        }))
+        .map(edge => {
+          const address = `Санкт-Петербург, ${
+            edge.node.geo?.find(item => 'Район' === item.title || 'Принимает у себя' === item.title).values[0].values[0].text
+          }`;
+          return {
+            ...objectMapper(edge.node, {
+              id: 'externalId',
+              fullName: 'name',
+              avatar: {
+                key: 'avatar',
+                transform: val => `https:${val}`,
+              },
+              newRank: 'rating',
+              reviewsCount: 'reviewsCount',
+              geo: { key: 'address', transform: () => address },
+              'priceListPreview.prices': {
+                key: 'prices',
+                transform: val => {
+                  return val
+                    ?.filter(item => Object.keys(categoryType).includes(item.price.serviceId))
+                    .map(item => ({
+                      category: categoryType[item.price.serviceId],
+                      petType: petType[item.price.serviceId],
+                      from: item.price.from,
+                      currency: item.price.currency.code,
+                    }));
+                },
+              },
+            }),
+            categories: edge.node.geo?.map(geo => geoMap[geo.title]),
+          };
+        })
         .map(sitter => ({
           source: SitterSourceType.PROFI,
           ...sitter,
         })),
-      totalCount: data.data.pxf.profiles.totalCount,
+      size: data.data.pxf.profiles.totalCount,
       source: SitterSourceType.PROFI,
     }),
   },
@@ -85,9 +142,29 @@ const sitterServices: RequestOptions[] = [
             },
             {
               id: 'externalId',
-              fullName: 'fullName',
-              district: 'location',
-              price: 'price',
+              fullName: 'name',
+              district: 'address',
+              avatar: 'avatar',
+              price: {
+                key: 'prices',
+                transform: val => [
+                  {
+                    category: sitter.priceType === '' ? SearchCategoryType.DOGSITTING : SearchCategoryType.DOGSITTING_REMOTE,
+                    petType: PetType.DOG, //need fix
+                    from: val,
+                    currency: 'RUB',
+                  },
+                ],
+              },
+              reviewsRating: 'rating',
+              reviewsCount: 'reviewsCount',
+              location: {
+                key: 'geo',
+                transform: val => {
+                  const latLng = val.slice(1, val.length - 1).split(',');
+                  return { lat: parseFloat(latLng[0]), lng: parseFloat(latLng[1]) };
+                },
+              },
             },
           ),
         )
@@ -95,7 +172,7 @@ const sitterServices: RequestOptions[] = [
           source: SitterSourceType.DOGSY,
           ...sitter,
         })),
-      totalCount: parseInt(data.resultsCount.match(totalCountPattern)[1], 10),
+      size: parseInt(data.resultsCount.match(totalCountPattern)[1], 10),
       source: SitterSourceType.DOGSY,
     }),
   },
@@ -103,6 +180,18 @@ const sitterServices: RequestOptions[] = [
 
 function getAllData(requestOptions: RequestOptions[]) {
   return Promise.all(requestOptions.map(fetchData));
+}
+
+function fetchGeo(item): Sitter {
+  return geocoder
+    .geocode(item.address)
+    .then(function (result) {
+      return { ...item, geo: { lat: result[0].latitude, lng: result[0].longitude } };
+    })
+    .catch(function (error) {
+      console.log(error);
+      return item;
+    });
 }
 
 function fetchData(requestOptions: RequestOptions) {
@@ -122,7 +211,6 @@ function fetchData(requestOptions: RequestOptions) {
     headers: requestOptions.headers,
   })
     .then(function (response) {
-      console.log(response.data);
       return {
         success: true,
         data: requestOptions.convert(response.data),
@@ -143,7 +231,7 @@ class SitterService {
       })),
     );
 
-    const totalCounts = result.filter(value => value.success).map(value => ({ totalCount: value.data.totalCount, source: value.data.source }));
+    const totalCounts = result.filter(value => value.success).map(value => ({ totalCount: value.data.size, source: value.data.source }));
 
     const allDataRequests = [
       ...Array(Math.floor(totalCounts.filter(value => value.source === SitterSourceType.PROFI).map(value => value.totalCount) / 20) + 1)
@@ -162,26 +250,37 @@ class SitterService {
         })),
     ];
 
-    getAllData(allDataRequests).then(value =>
-      cache.set(
-        searchCategory,
-        value
+    getAllData(allDataRequests)
+      .then(value => {
+        const formattedResult = value
           .filter(value => value.success)
           .map(value => value.data.data)
           .reduce((previousValue, currentValue) => {
             return previousValue.concat(currentValue);
-          })
-          .filter(value => !value.categories || value.categories?.includes(searchCategory)),
-      ),
-    );
+          });
+        console.log(formattedResult);
+        return Promise.all(formattedResult.map(item => (!item.geo && item.address ? fetchGeo(item) : item)));
+      })
+      .then(result => {
+        console.log(result);
+        cache.set(
+          searchCategory,
+          result.filter(value => !value.categories || value.categories?.includes(searchCategory)),
+        );
+      });
 
-    return result
+    const formattedResult = result
       .filter(value => value.success)
       .map(value => value.data.data)
       .reduce((previousValue, currentValue) => {
         return previousValue.concat(currentValue);
-      })
-      .filter(value => !value.categories || value.categories?.includes(searchCategory));
+      });
+
+    const formattedResultWithLatLng = await Promise.all(formattedResult.map(item => (!item.geo ? fetchGeo(item) : item)));
+
+    return formattedResultWithLatLng
+      .filter(value => !value.categories || value.categories?.includes(searchCategory))
+      .sort((value1, value2) => value1.name.localeCompare(value2.name));
   }
 }
 
