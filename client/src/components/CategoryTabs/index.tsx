@@ -37,7 +37,7 @@ export const CategoryTabs = () => {
       <Grid item xs={12}>
         <Item>
           <Tabs
-            centeredл
+            centered
             variant="fullWidth"
             value={value}
             onChange={handleChange}

@@ -97,10 +97,10 @@ export const DaySittersTab: React.FC<CategoryTabType> = ({value, index, category
                       />
                       <CardContent>
                         <Typography gutterBottom variant="body1" textAlign={"left"} style={styleText}>
-                          {item.fullName}
+                          {item.name}
                         </Typography>
                         <Typography variant="subtitle2" textAlign={"left"} style={styleText2}>
-                          {item.location}
+                          {item.address}
                         </Typography>
                       </CardContent>
                     </CardActionArea>

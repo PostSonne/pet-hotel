@@ -5,7 +5,7 @@ import NodeCache from 'node-cache';
 import NodeGeocoder from 'node-geocoder';
 import { SearchResponse } from '../interfaces/search.response.interface';
 import { PetType } from '../enums/pet.type';
-import {Sitter} from "../interfaces/sitter.interface";
+import { Sitter } from '../interfaces/sitter.interface';
 
 const objectMapper = require('object-mapper');
 
@@ -97,7 +97,7 @@ const sitterServices: RequestOptions[] = [
                 key: 'avatar',
                 transform: val => `https:${val}`,
               },
-              newRank: 'rating',
+              newRank: { key: 'rating', transform: val => parseFloat(val) },
               reviewsCount: 'reviewsCount',
               geo: { key: 'address', transform: () => address },
               'priceListPreview.prices': {

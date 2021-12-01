@@ -1,19 +1,29 @@
 import axios from "axios";
 import {SitterSourceType} from "../../../../server/src/enums/sitter.source.type";
 import {SearchCategoryType} from "../../components/CategoryTabs";
+import {Geo} from "../../../../server/src/interfaces/geo.interface";
+import {PetType} from "../../../../server/src/enums/pet.type";
 
 export interface Sitter {
   id?: string;
   externalId: string;
-  fullName: string;
-  location: string;
-  price?: any;
   source: SitterSourceType;
-  name?: string;
-  fullAddress?: string;
-  phone?: string;
+  name: string;
+  address: string;
+  location: string;
+  geo: Geo;
+  avatar: string;
+  icon?: string;
+  prices?: Price[];
   rating?: number;
-  icon?: string
+  reviewsCount?: number;
+}
+
+export interface Price {
+  category: SearchCategoryType;
+  petType: PetType[];
+  from: number;
+  currency: string;
 }
 
 export type SearchResponseType = {
